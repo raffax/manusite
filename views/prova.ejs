@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>EGP AR Login</title>
+    <meta name="description" content="AR Login" lang="en">
+    <script src="/js/jquery.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+    <style>
+          #preview {
+              width: 280px;
+              height: 180px;
+          }
+    </style>
+  </head>
+  <body>
+    <h3>Smartop Test</h3>
+    <p> Smart Operator is a digital assistant for maintenance inspections to energy plants.        
+        This page test the Smartop Database API, powered by Ibm Cloudant Nosql service.<br>        
+    </p>
+    <form>
+        <input type="button" value="Create a New Session" onclick=init()>            
+    </form>
+    <div id="esito"></div>
+    <br>
+    <h5>Add a photo to the 1st control of the created session</h5>
+    <form id="take" method="POST" enctype="multipart/form-data" action="/savefoto">
+        <input type=hidden id="uid" name="uid" value="opw01">
+        <input type=hidden id="session_id" name="session_id">
+        <input type=hidden id="step_id" name="step_id" value="1">
+        <input type=file name=file id=file>
+        <input type="submit" value="Save Photo">            
+    </form>
+    <h5>Add a Comment to the 1st control of the created session</h5>
+    <form id="nota" method="POST" action="/step_note">
+        <input type=hidden id="uid1" name="uid" value="opw01">
+        <input type=hidden id="session_id1" name="session_id">
+        <input type=hidden id="step_id1" name="step_id" value="1">
+        <input type="text" id="notes" name="notes" placeholder="Comment">        
+        <input type="button" value="Add Comment" onclick="nota()">            
+    </form>
+    <br>
+
+    <script>
+    function init() {
+        $.ajax({
+            url: "/init",
+            data: {uid:'opw01'},
+            dataType:'json',
+            success: function(data) {
+                if(data.status==1) {
+                    $('#session_id').val(data.session);
+                    var ppp="<h3>Sessione Creata</h3>"+
+                    "<h4>Elenco Controlli:</h4>";
+                    if(data.checklist) {
+                        for(var i=0;i<data.checklist.length;i++) {
+                            ppp+=data.checklist[i]+'<br>';
+                        }
+                        $('#esito').html(ppp);
+                    }
+                }
+            }
+        })        
+    }
+
+    function nota() {
+        $('#uid1').val($('#uid').val());
+        $('#session_id1').val($('#session_id').val());
+        $('#nota').submit();
+    }
+    </script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>EGP AR Login</title>
+    <meta name="description" content="AR Login" lang="en">
+    <script src="/js/jquery.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+    <style>
+          #preview {
+              width: 280px;
+              height: 180px;
+          }
+
+          #faiFoto {
+              display:none;
+          }
+    </style>
+  </head>
+  <body>
+    <h3>Dialoga</h3>
+    <form>
+        <input type="button" value="Create a New Session" onclick=init()>            
+    </form>
+    <h5>User</h5>
+    <input type=hidden id=context name=context />
+    <input type=hidden id=coma name=coma value="/speak">
+    <input type="text" id="text" name="text" placeholder="Comment" style="width:200px">        
+    <input type="button" value="Parla" onclick="parla()">
+    <div id="domanda">        
+    </div>
+    <h5>Miss Manu</h5>
+    <div id=risposta>
+    </div>
+    <div id="faiFoto">
+        <form id="take" method="POST" enctype="multipart/form-data" action="/save_photo">
+        <input type=file name=file id=file>
+        <input type="submit" value="Save Photo">            
+    </form> 
+    </div>
+
+    <h5>Add a Comment to the 1st control of the created session</h5>
+
+    <br>
+
+    <script>
+    function init() {
+        $.ajax({
+            url: "/init",
+            data: {uid:'Raffa'},
+            dataType:'json',
+            success: function(data) {
+                if(data.status==1) {
+                    $('#risposta').html(data.text);
+                }
+            }
+        })        
+    }
+
+    function parla() {        
+        $.ajax({
+            url: "/speak",
+            method:'POST',
+            data: {text:$('#text').val()},
+            dataType:'json',
+            success: function(data) {
+                if(data.status==1) {
+                    $('#risposta').html(data.text);
+                }
+                if(data.action=='take_photo') {
+                    $('#faiFoto').css('display','block');
+                }
+            },
+            error: function(erro) {
+                $('#risposta').html(erro);
+            }
+        })        
+    }
+    </script>
+</body>
+</html>
